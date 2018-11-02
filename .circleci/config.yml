@@ -32,7 +32,7 @@ jobs:
       - run:
           name: Archive Wikipedia example docu
           command: |
-            pusd scenarioo-docu-generation-example/build/scenarioDocuExample
+            pushd scenarioo-docu-generation-example/build/scenarioDocuExample
             zip -r ../../../exampleScenariooDocu.zip ./*
             popd
       - run:
