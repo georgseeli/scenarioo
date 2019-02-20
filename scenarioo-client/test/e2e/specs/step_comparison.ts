@@ -9,7 +9,7 @@ const BASE_SCREENSHOT_SRC = 'rest/branch/wikipedia-docu-example/build/last%20suc
 
 useCase('Step - Comparison')
     .description('Compare the screen of a step with same step in another run of same test in another build')
-    .fdescribe(() => {
+    .describe(() => {
 
         beforeEach(async () => {
             await Utils.startScenariooRevisited();

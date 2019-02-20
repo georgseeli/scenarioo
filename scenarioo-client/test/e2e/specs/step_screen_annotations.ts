@@ -6,7 +6,7 @@ import StepPage from '../pages/stepPage';
 
 useCase('Step - Screen Annotations')
     .description('Screens can have visual annotations that e.g. mark where a click was done or where data was entered that can be displayed in step view.')
-    .fdescribe(() => {
+    .describe(() => {
 
         beforeEach(async () => {
             await Utils.startScenariooRevisited();
