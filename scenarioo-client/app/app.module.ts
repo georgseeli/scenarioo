@@ -29,11 +29,11 @@ import {SelectedComparison} from './diffViewer/selectedComparison.service';
 import {OrderModule} from 'ngx-order-pipe';
 import {FilterPipe} from './pipes/filter.pipe';
 import {TooltipModule} from 'ngx-bootstrap';
+import {DiffViewerModule} from './diffViewer/diff-viewer.module';
 
 @NgModule({
     declarations: [
         LabelMetadataComponent,
-        TitleComponent,
         TitleComponent,
         ManageTabsComponent,
         BranchAliasesDirective,
@@ -48,7 +48,6 @@ import {TooltipModule} from 'ngx-bootstrap';
     entryComponents: [
         LabelMetadataComponent,
         TitleComponent,
-        TitleComponent,
         ManageTabsComponent,
         MainPageComponent,
         UseCasesComponent,
@@ -60,6 +59,7 @@ import {TooltipModule} from 'ngx-bootstrap';
         FormsModule,
         UpgradeModule,
         RestControllerModule,
+        DiffViewerModule,
         TabsModule.forRoot(),
         ModalModule.forRoot(),
         OrderModule,
@@ -78,11 +78,11 @@ import {TooltipModule} from 'ngx-bootstrap';
         LabelConfigurationService,
         BuildDiffInfoService,
         BuildDiffInfosService,
-        {provide: LocationService, useFactory: (i: any) => i.get('$location'), deps: ['$injector']},
         {provide: SelectedBranchAndBuildService, useFactory: (i: any) => i.get('SelectedBranchAndBuildService'), deps: ['$injector']},
         {provide: BranchesAndBuildsService, useFactory: (i: any) => i.get('BranchesAndBuildsService'), deps: ['$injector']},
         {provide: SelectedComparison, useFactory: (i: any) => i.get('SelectedComparison'), deps: ['$injector']},
         {provide: SharePageService, useFactory: (i: any) => i.get('SharePageService'), deps: ['$injector']},
+        {provide: LocationService, useFactory: (i: any) => i.get('$location'), deps: ['$injector']},
     ],
 })
 export class AppModule {
