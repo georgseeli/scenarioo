@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener} from '@angular/core';
 import {SelectedBranchAndBuildService} from '../../shared/navigation/selectedBranchAndBuild.service';
 import {BranchesAndBuildsService} from '../../shared/navigation/branchesAndBuilds.service';
 import {UseCasesResource, UseCaseSummary} from '../../shared/services/useCasesResource.service';
@@ -7,14 +7,15 @@ import {ConfigurationService} from '../../services/configuration.service';
 import {SelectedComparison} from '../../diffViewer/selectedComparison.service';
 import {OrderPipe} from 'ngx-order-pipe';
 import {LocationService} from '../../shared/location.service';
+import {catchError} from 'rxjs/operators';
 
 @Component({
-    selector: 'sc-usecase-overview',
+    selector: 'sc-usecases-overview',
     template: require('./usecases-overview.component.html'),
     styles: [require('./usecases-overview.component.css').toString()],
 })
 
-export class UseCasesComponent implements OnInit {
+export class UseCasesComponent {
 
     usecases: UseCaseSummary[] = [];
 
@@ -24,12 +25,13 @@ export class UseCasesComponent implements OnInit {
     sortedUsecases: any[];
     reverse: boolean = false;
 
+    arrowkeyLocation = 0;
+
     labelConfigurations: LabelConfigurationMap = undefined;
     labelConfig = undefined;
 
     getStatusStyleClass = undefined;
     comparisonInfo = undefined;
-
 
     constructor(private selectedBranchAndBuildService: SelectedBranchAndBuildService,
                 private branchesAndBuildsService: BranchesAndBuildsService,
@@ -38,23 +40,23 @@ export class UseCasesComponent implements OnInit {
                 private configurationService: ConfigurationService,
                 private orderPipe: OrderPipe,
                 private locationService: LocationService,
-                private selectedComparison: SelectedComparison,) {
+                private selectedComparison: SelectedComparison ) {
 
     }
 
     ngOnInit(): void {
         this.selectedBranchAndBuildService.callOnSelectionChange((selection) => {
 
-            this.branchesAndBuildsService.getBranchesAndBuilds().then(branchesAndBuilds => {
-                //console.log(branchesAndBuilds);
+            this.branchesAndBuildsService.getBranchesAndBuilds().then((branchesAndBuilds) => {
+                // console.log(branchesAndBuilds);
                 this.useCasesResource.query({
                     branchName: selection.branch,
                     buildName: selection.build,
                 }).subscribe((useCaseSummaries: UseCaseSummary[]) => {
                     this.usecases = useCaseSummaries;
-                    //console.log(useCaseSummaries);
+                    // console.log(useCaseSummaries);
                 });
-            });
+            }).catch((error: any) => console.warn(error));
         });
 
         this.labelConfigurationsResource.query()
@@ -67,8 +69,12 @@ export class UseCasesComponent implements OnInit {
         this.sortedUsecases = this.orderPipe.transform(this.usecases, this.order);
         console.log(this.sortedUsecases);
 
-        //this.comparisonInfo = this.selectedComparison.info;
-
+        /*
+        this.selectedComparison.callOnSelectionChange((info) => {
+            this.comparisonInfo = info;
+        });
+        console.log(this.comparisonInfo);
+        */
     }
 
     resetSearchField() {
@@ -82,14 +88,27 @@ export class UseCasesComponent implements OnInit {
         this.order = value;
     }
 
+    @HostListener('window:keyup', ['$event'])
+    keyEvent(event: KeyboardEvent) {
+        switch (event.code) {
+            case 'ArrowDown':
+                this.arrowkeyLocation++;
+                break;
+            case 'ArrowUp':
+                this.arrowkeyLocation--;
+                break;
+            case 'Enter':
+                console.log('enter is working');
+                // this.goToUseCase(this.useCaseName);
+                break;
+        }
+    }
+
     goToUseCase(useCase) {
         const params = this.locationService.path('/usecase/' + useCase);
     }
 
     getLabelStyle(labelName) {
-        //console.log("getLabelStyle is working");
-        //console.log(labelName);
-
         if (this.labelConfigurations) {
             this.labelConfig = this.labelConfigurations[labelName];
             if (this.labelConfig) {
